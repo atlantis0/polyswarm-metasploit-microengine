@@ -1,0 +1,84 @@
+version: '2'
+services:
+
+  test_balancemanager_addis:
+    image: "polyswarm/polyswarm-client:latest"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KEYFILE=docker/microengine_keyfile
+      - PASSWORD=password
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://polyswarmd:31337"
+      - "-timeout"
+      - "1000s"
+      - "balancemanager"
+      - "deposit"
+      - "--polyswarmd-addr"
+      - "polyswarmd:31337"
+      - "--insecure-transport"
+      - "100000"
+
+
+
+  test_microengine-frontend_addis:
+    image: "polyswarm/polyswarm-client:latest"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KEYFILE=docker/microengine_keyfile
+      - PASSWORD=password
+      - REDIS_ADDR=redis:6379
+      - QUEUE=microengine-addis
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://polyswarmd:31337"
+      - "-wait"
+      - "tcp://redis:6379"
+      - "-timeout"
+      - "1000s"
+      - "microengine"
+      - "--log"
+      - "INFO"
+      - "--polyswarmd-addr"
+      - "polyswarmd:31337"
+      - "--insecure-transport"
+      - "--testing"
+      - "10"
+      - "--backend"
+      - "producer"
+      - "--chains"
+      - "side"
+      - "--artifact-type"
+      - "file"
+      
+
+  test_microengine-worker_addis:
+    image: "microengine-addis"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_ADDR=redis:6379
+      - QUEUE=microengine-addis
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://polyswarmd:31337"
+      - "-wait"
+      - "tcp://redis:6379"
+      - "-timeout"
+      - "1000s"
+      - "worker"
+      - "--log"
+      - "INFO"
+      - "--testing"
+      - "10"
+      - "--backend"
+      - "addis_ababa"
+
+
+
+networks:
+  default:
+    external:
+      name: orchestration_default

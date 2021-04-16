@@ -1,0 +1,86 @@
+version: '2'
+services:
+
+  redis:
+    image: "redis"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+
+
+
+
+
+  balancemanager_addis:
+    image: "polyswarm/polyswarm-client:latest"
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - marketplace.env
+    volumes:
+      - "../keyfiles:/keyfiles:ro"
+    command:
+      - "balancemanager"
+      - "maintain"
+      - "10000"
+      - "10000"
+
+
+
+
+
+  microengine-frontend_addis:
+    image: "polyswarm/polyswarm-client:latest"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_ADDR=redis:6379
+      - QUEUE=microengine-addis
+    depends_on:
+      - redis
+    env_file:
+      - marketplace.env
+    volumes:
+      - "../keyfiles:/keyfiles:ro"
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://redis:6379"
+      - "-timeout"
+      - "1000s"
+      - "microengine"
+      - "--log"
+      - "INFO"
+      - "--backend"
+      - "producer"
+      - "--chains"
+      - "side"
+      - "--artifact-type"
+      - "file"
+      
+
+  microengine-worker_addis:
+    image: "microengine-addis"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_ADDR=redis:6379
+      - QUEUE=microengine-addis
+    depends_on:
+      - redis
+    env_file:
+      - marketplace.env
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://redis:6379"
+      - "-timeout"
+      - "1000s"
+      - "worker"
+      - "--log"
+      - "INFO"
+      - "--backend"
+      - "addis_ababa"
+
+
+
+

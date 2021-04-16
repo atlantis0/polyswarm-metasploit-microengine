@@ -1,0 +1,8 @@
+version: '3.4'
+services:
+  
+  test_addis:
+    image: "microengine-addis"
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: ["pytest", "-s", '--log-cli-level=INFO']
