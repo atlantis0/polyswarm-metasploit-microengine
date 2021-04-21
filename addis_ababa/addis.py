@@ -117,8 +117,6 @@ class Scanner(AbstractScanner):
         # File Scan
         if artifact_type == ArtifactType.FILE:
             return self.addis.file_scan(content, verdict_metadata)
-            
-
         
 
         # Not supported artifact
@@ -207,10 +205,10 @@ class Addis:
             }
         """
 
-        # to simplify thins, create a file from the content that is passed
-        # here, we will check if the file is compressed (since apk files are compressed)
-        # and do a basic check to see if the compressed file contains classes.dex & AndroidManifest.xml
-        # so checks are necessary because our rule operates on Android'a APK file
+        # to simplify things, create a file from the content
+        # then we will check if the file is compressed (since apk files are compressed)
+        # and do a basic check to see if the compressed file contains classes.dex
+        # These checks are necessary because our rule operates only on Android'a APK file
 
         is_malicious = False
 

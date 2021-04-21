@@ -1,3 +1,3 @@
 Intro
 =====
-A simple polyswarm microengine to metasploit based malwares on Android
+A simple polyswarm microengine to detect metasploit based Android malwares

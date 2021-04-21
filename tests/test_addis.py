@@ -52,6 +52,7 @@ async def test_scan_random_mal_not():
                                         chain='home')
             assert result.bit
             assert result.verdict == t
+
 @pytest.mark.asyncio
 async def test_setup_teardown_multiple_times():
     scanner = Scanner()
